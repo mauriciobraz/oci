@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+
+id: vanilla
+name: Vanilla
+
+stages:
+  - id: build
+    base: ghcr.io/vanilla-os/desktop:main
+
+    args:
+      DEBIAN_FRONTEND: noninteractive
+
+    singlelayer: false
+
+    runs:
+      commands:
+        - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
+
+    modules:
+      - name: init-setup
+        type: shell
+        commands:
+          - lpkg --unlock
+          - apt-get update
+
+      - name: packages-modules
+        type: includes
+        includes:
+          - modules/50-nvidia-driver-install.yml
+          - modules/51-nvidia-systemd-units.yml
+
+      - name: extra-utilities
+        type: apt
+        source:
+          packages:
+            - switcheroo-control
+
+      - name: vanilla-tools
+        type: shell
+
+        source:
+          type: tar
+          url: https://github.com/Vanilla-OS/vanilla-tools/releases/download/v1.0.0/vanilla-tools.tar.gz
+          checksum: 0e1d92d9c9154f9a115e97b40ff692afa52ddd0d9f770a8ec67440bf1a48aa72
+
+        commands:
+          - mkdir -p /usr/bin
+          - cp /sources/vanilla-tools/vanilla-tools/nrun /usr/bin/nrun
+          - cp /sources/vanilla-tools/vanilla-tools/prime-switch /usr/bin/prime-switch
+          - chmod +x /usr/bin/nrun
+          - chmod +x /usr/bin/prime-switch
+
+      - name: enable-wayland
+        type: shell
+        commands:
+          - mkdir -p /etc/udev/rules.d
+          - ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
+
+      - name: cleanup
+        type: shell
+        commands:
+          - apt autoremove -y
+          - apt clean
+          - apt remove -y zutty gnome-shell-extension-prefs
+          - SUDO_FORCE_REMOVE=yes apt purge -y sudo
+          - lpkg --lock
+          - rm /etc/apt/sources.list.d/nvidia-drivers.list
+
+      - name: fsguard
+        type: fsguard
+
+        GenerateKey: true
+        CustomFsGuard: false
+
+        FilelistPaths: ["/usr/bin"]
+        FsGuardLocation: "/usr/sbin/FsGuard"
+
+        modules:
+          - name: remove-prev-fsguard
+            type: shell
+            commands:
+              - rm -rf /FsGuard
+              - rm -f ./minisign.pub ./minisign.key
+              - chmod +x /usr/sbin/init
+
+      - name: cleanup2
+        type: shell
+        commands:
+          - rm -rf /tmp/*
+          - rm -rf /var/tmp/*
+          - rm -rf /sources
