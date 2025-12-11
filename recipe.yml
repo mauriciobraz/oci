@@ -2,6 +2,7 @@
 
 id: vanilla
 name: Vanilla
+vibversion: 1.0.0
 
 stages:
   - id: build
