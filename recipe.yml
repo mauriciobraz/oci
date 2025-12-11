@@ -5,12 +5,9 @@ name: Vanilla
 
 stages:
   - id: build
+
     base: ghcr.io/vanilla-os/desktop:main
-
-    args:
-      DEBIAN_FRONTEND: noninteractive
-
-    singlelayer: false
+    args: { DEBIAN_FRONTEND: noninteractive }
 
     runs:
       commands:
@@ -26,11 +23,10 @@ stages:
       - name: packages-modules
         type: includes
         includes:
-          - modules/50-nvidia-driver-install.yml
-          - modules/51-nvidia-systemd-units.yml
-          - modules/60-1password.yml
-          - modules/61-docker-ce.yml
-          - modules/62-qemu-kvm.yml
+          - modules/1password.yml
+          - modules/docker-ce.yml
+          - modules/nvidia-driver.yml
+          - modules/nvidia-systemd-units.yml
 
       - name: extra-utilities
         type: apt
@@ -92,3 +88,5 @@ stages:
           - rm -rf /tmp/*
           - rm -rf /var/tmp/*
           - rm -rf /sources
+
+    singlelayer: false
