@@ -28,6 +28,9 @@ stages:
         includes:
           - modules/50-nvidia-driver-install.yml
           - modules/51-nvidia-systemd-units.yml
+          - modules/60-1password.yml
+          - modules/61-docker-ce.yml
+          - modules/62-qemu-kvm.yml
 
       - name: extra-utilities
         type: apt
