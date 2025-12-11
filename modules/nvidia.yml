@@ -29,20 +29,20 @@ modules:
     name: nvidia-driver-hold
 
     commands:
-      - >
-        apt-mark hold
-        libnvidia-cfg1
-        libnvidia-fbc1
-        libnvidia-glcore
-        libnvidia-glvkspirv
-        libnvidia-gpucomp
-        nvidia-container-toolkit
-        nvidia-driver
-        nvidia-kernel-open
-        nvidia-persistenced
-        nvidia-settings
-        nvidia-smi
-        nvidia-vaapi-driver
+      - |
+        apt-mark hold \
+          libnvidia-cfg1 \
+          libnvidia-fbc1 \
+          libnvidia-glcore \
+          libnvidia-glvkspirv \
+          libnvidia-gpucomp \
+          nvidia-container-toolkit \
+          nvidia-driver \
+          nvidia-kernel-open \
+          nvidia-persistenced \
+          nvidia-settings \
+          nvidia-smi \
+          nvidia-vaapi-driver \
 
   - type: shell
     name: nvidia-systemd-units
