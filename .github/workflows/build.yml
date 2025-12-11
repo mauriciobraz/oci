@@ -37,7 +37,7 @@ jobs:
       attestations: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Change tag in recipe
         if: ${{ github.ref_type == 'tag' }}
