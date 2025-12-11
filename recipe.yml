@@ -2,7 +2,6 @@
 
 id: vanilla
 name: Vanilla
-vibversion: 1.0.0
 
 stages:
   - id: build
@@ -26,8 +25,7 @@ stages:
         includes:
           - modules/1password.yml
           - modules/docker-ce.yml
-          - modules/nvidia-driver.yml
-          - modules/nvidia-systemd-units.yml
+          - modules/nvidia.yml
 
       - name: extra-utilities
         type: apt

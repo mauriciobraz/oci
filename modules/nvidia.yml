@@ -1,0 +1,56 @@
+type: shell
+name: nvidia-repo-setup
+
+commands:
+  - curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/nvidia-drivers.gpg
+  - echo 'deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/ /' > /etc/apt/sources.list.d/nvidia-drivers.list
+  - apt-get update
+
+modules:
+  - type: apt
+    name: nvidia-driver-install
+
+    source:
+      packages:
+        - cuda-drivers
+        - libnvidia-cfg1
+        - libnvidia-fbc1
+        - libnvidia-glcore
+        - libnvidia-glvkspirv
+        - libnvidia-gpucomp
+        - nvidia-container-toolkit
+        - nvidia-driver
+        - nvidia-kernel-open
+        - nvidia-persistenced
+        - nvidia-settings
+        - nvidia-vaapi-driver
+
+  - type: shell
+    name: nvidia-driver-hold
+
+    commands:
+      - >
+        apt-mark hold
+        libnvidia-cfg1
+        libnvidia-fbc1
+        libnvidia-glcore
+        libnvidia-glvkspirv
+        libnvidia-gpucomp
+        nvidia-container-toolkit
+        nvidia-driver
+        nvidia-kernel-open
+        nvidia-persistenced
+        nvidia-settings
+        nvidia-smi
+        nvidia-vaapi-driver
+
+  - type: shell
+    name: nvidia-systemd-units
+
+    commands:
+      - mkdir -p /etc/systemd/system/systemd-suspend.service.wants
+      - mkdir -p /etc/systemd/system/systemd-hibernate.service.wants
+
+      - ln -s /usr/lib/systemd/system/nvidia-resume.service /etc/systemd/system/systemd-hibernate.service.wants/nvidia-resume.service
+      - ln -s /usr/lib/systemd/system/nvidia-suspend.service /etc/systemd/system/systemd-suspend.service.wants/nvidia-suspend.service
+      - ln -s /usr/lib/systemd/system/nvidia-hibernate.service /etc/systemd/system/systemd-hibernate.service.wants/nvidia-hibernate.service
